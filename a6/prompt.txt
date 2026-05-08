@@ -1,0 +1,3 @@
+A6: 实现 FCN 语义分割示例；实现 R-CNN、Fast R-CNN、Faster R-CNN 目标检测示例；实现 Mask R-CNN 图像实例分割示例；对比不同方法性能；实现成桌面 app 或 web 应用，具有交互操作；提交 PDF 实验报告、prompt 文本、截图、小结、核心源码 py 文件，并列出使用的 Agent 或 LLM。
+
+使用的 Agent/LLM：Codex GPT-5
