@@ -5,6 +5,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import streamlit as st
 from PIL import Image
 
@@ -53,6 +54,8 @@ with tabs[0]:
     res = core.semantic_fcn(image, smooth=smooth)
     show_array(res.image, f"{res.method} · {res.latency_ms:.1f} ms")
     st.metric("语义区域数", res.count)
+    if res.details:
+        st.dataframe(pd.DataFrame(res.details), use_container_width=True)
 
 with tabs[1]:
     st.subheader("R-CNN / Fast / Faster R-CNN")
@@ -62,6 +65,10 @@ with tabs[1]:
     res = core.detection_demo(image, method, proposals, threshold)
     show_array(res.image, f"{res.method} · {res.latency_ms:.1f} ms")
     st.metric("检测数量", res.count)
+    count_cols = st.columns(2)
+    count_cols[0].dataframe(pd.DataFrame(core.class_counts(image, threshold)), use_container_width=True)
+    if res.details:
+        count_cols[1].dataframe(pd.DataFrame(res.details), use_container_width=True)
 
 with tabs[2]:
     st.subheader("Mask R-CNN 实例分割")
@@ -69,11 +76,13 @@ with tabs[2]:
     res = core.mask_rcnn_demo(image, threshold)
     show_array(res.image, f"{res.method} · {res.latency_ms:.1f} ms")
     st.metric("实例数量", res.count)
+    if res.details:
+        st.dataframe(pd.DataFrame(res.details), use_container_width=True)
 
 with tabs[3]:
     st.subheader("方法性能对比")
     rows = [r.__dict__ for r in core.compare_methods(image)]
-    st.dataframe([{k: v for k, v in row.items() if k != "image"} for row in rows], use_container_width=True)
+    st.dataframe([{k: v for k, v in row.items() if k not in {"image", "details"}} for row in rows], use_container_width=True)
     st.bar_chart({row["method"]: row["latency_ms"] for row in rows})
 
 
